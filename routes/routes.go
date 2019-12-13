@@ -11,6 +11,11 @@ func Init() *echo.Echo {
 
 	e.GET("/", controllers.Home)
 
-	e.GET("/users", controllers.GetUsers)
+	e.GET("/users", controllers.GetAllUsers)
+	e.GET("/users/:id", controllers.GetUser)
+	e.POST("/users", controllers.NewUser)
+	e.DELETE("/users/:id", controllers.DeleteUser)
+	e.PUT("/users/:id", controllers.UpdateUser)
+
 	return e
 }
