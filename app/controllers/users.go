@@ -13,7 +13,9 @@ func GetAllUsers(c echo.Context) error {
 	db := db.GetDb()
 	users := []models.User{}
 	db.Find(&users)
-	return c.JSON(http.StatusOK, users)
+
+	// return c.JSON(http.StatusOK, users)
+	return c.Render(http.StatusOK, "users/index.html", users)
 }
 
 func GetUser(c echo.Context) error {
@@ -21,15 +23,19 @@ func GetUser(c echo.Context) error {
 	id := c.Param("id")
 	user := []models.User{}
 	db.Where("id=?", id).First(&user)
-	return c.JSON(http.StatusOK, user)
+	// return c.JSON(http.StatusOK, user)
+	return c.Render(http.StatusOK, "users/show.html", map[string]interface{}{
+		"User":  user,
+		"Title": "User",
+	})
 }
 
 func NewUser(c echo.Context) error {
 	db := db.GetDb()
-	name := c.QueryParam("name")
-	email := c.QueryParam("email")
-	username := c.QueryParam("username")
-	password := c.QueryParam("password")
+	name := c.FormValue("name")
+	email := c.FormValue("email")
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
 	user := models.User{Name: name, Email: email, Username: username, Password: password}
 	db.Create(&user)
@@ -43,7 +49,7 @@ func DeleteUser(c echo.Context) error {
 	id := c.Param("id")
 	db.Where("id = ?", id).Delete(&user)
 
-	return c.String(http.StatusOK, id+" user successfully deleted")
+	return c.NoContent(http.StatusNoContent)
 }
 
 func UpdateUser(c echo.Context) error {
@@ -58,5 +64,5 @@ func UpdateUser(c echo.Context) error {
 
 	db.Model(&user).Where("id=?", id).Updates(map[string]interface{}{"email": email, "name": name, "username": username, "password": password})
 
-	return c.String(http.StatusOK, id+" user successfully updated")
+	return c.JSON(http.StatusOK, user)
 }

@@ -2,12 +2,20 @@ package main
 
 import (
 	"github.com/mblode/gospel/db"
-	"github.com/mblode/gospel/routes"
+	"github.com/mblode/gospel/router"
 )
 
 func main() {
-	db.Init()
-	e := routes.Init()
+	r := router.New()
+	v1 := r.Group("/api")
 
-	e.Logger.Fatal(e.Start(":3000"))
+	d := db.New()
+	db.AutoMigrate(d)
+
+	userStore := store.NewUserStore(d)
+	locationStore := store.NewLocationStore(d)
+	h := handler.NewHandler(userStore, locationStore)
+	h.Register(v1)
+
+	r.Logger.Fatal(r.Start("127.0.0.1:3000"))
 }

@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+
 	"github.com/mblode/gospel/app/models"
 	"github.com/mblode/gospel/config"
 
@@ -13,7 +14,13 @@ var db *gorm.DB
 var err error
 
 func initialMigration(db *gorm.DB) {
-	db.Debug().AutoMigrate(&models.User{})
+	db.AutoMigrate(
+		&models.User{},
+		&models.Follow{},
+		&models.Location{},
+		&models.Comment{},
+		&models.Tag{},
+	)
 }
 
 func Init() {
